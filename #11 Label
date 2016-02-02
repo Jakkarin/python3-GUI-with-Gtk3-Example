@@ -1,0 +1,96 @@
+#!/usr/bin/python3
+
+# Gtk.Label
+# 	-	set_text(String with escape character)
+# 	-	set_markup(HTML)
+# 	-	set_selectable(Boolean)
+#	-	set_max_width_chars(n_char)
+# 	-	set_justify(Enum)
+# 		-	Gtk.Justification
+# 			-	LEFT	0
+# 			-	RIGHT	1
+# 			-	CENTER	2
+# 			-	FILL	3
+# 	-	set_line_wrap(Boolean)
+#	-	set_line_wrap_mode(Enum)
+#		-	Pango.WrapMode()
+#			-	WORD	0
+#			-	CHAR	1
+#			-	WORD_CHAR	2
+#	- new_with_mnemonic(str)
+#	- set_mnemonic_widget(widget)
+
+from gi.repository import Gtk, Pango
+
+class window(Gtk.Window):
+	def __init__(self):
+		super(window, self).__init__(title = "Label Example")
+		self.set_border_width(10)
+		self.set_default_size(600, 600)
+
+		hbox = Gtk.Box(spacing = 10)
+		vbox_left = Gtk.Box(orientation = Gtk.Orientation.VERTICAL, spacing = 10)
+		vbox_right = Gtk.Box(orientation = Gtk.Orientation.VERTICAL, spacing = 10)
+
+		self.add(hbox)
+		hbox.pack_start(vbox_left, True, True, 0)
+		hbox.pack_start(vbox_right, True, True, 0)
+
+		label = Gtk.Label("Default label.")
+		vbox_left.pack_start(label, True, True, 0)
+
+		label = Gtk.Label("Label Multiple line \nnone justify")
+		vbox_left.pack_start(label, True, True, 0)
+
+		label = Gtk.Label("Label Multiple line with \njustify right")
+		label.set_justify(Gtk.Justification.RIGHT)
+		vbox_left.pack_start(label, True, True, 0)
+
+		# Label Multiple line with markup
+		label = Gtk.Label()
+		label.set_markup("Text : <small>small</small>, <big>big</big>, <b>Bold</b>, <i>italic</i>"
+			"Link : <a href=\"https://www.google.co.th\" title=\"Go to Google\">Google.com</a>")
+		vbox_left.pack_start(label, True, True, 0)
+
+		# line warp
+		label = Gtk.Label()
+		label.set_text("This is an example of a line-wrapped label.  It "
+						"should not be taking up the entire             "
+						"width allocated to it, but automatically "
+						"wraps the words to fit.\n"
+						"     It supports multiple paragraphs correctly, "
+						"and  correctly   adds "
+						"many          extra  spaces. ")
+		label.set_line_wrap(True)
+		label.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+		vbox_right.pack_start(label, True, True, 0)
+
+		label = Gtk.Label()
+		label.set_text("This is an example of a line-wrapped, filled label. "
+						"It should be taking "
+						"up the entire              width allocated to it.  "
+						"Here is a sentence to prove "
+						"my point.  Here is another sentence. "
+						"Here comes the sun, do de do de do.\n"
+						"    This is a new paragraph.\n"
+						"    This is another newer, longer, better "
+						"paragraph.  It is coming to an end, "
+						"unfortunately.")
+		label.set_line_wrap(True)
+		label.set_justify(Gtk.Justification.FILL)
+		label.set_selectable(True);
+		vbox_right.pack_start(label, True, True, 0)
+
+		label = Gtk.Label.new_with_mnemonic("_Press Alt + P to select Bottom Button")
+		btn = Gtk.Button(label = "Waiting for select...")
+		def select(widget, data = None):
+			widget.set_label("Ok! Button is selected.")
+		btn.connect("clicked", select)
+		label.set_mnemonic_widget(btn)
+		vbox_right.pack_start(label, True, True, 0)
+		vbox_right.pack_start(btn, True, True, 0)
+
+window = window()
+window.connect('delete-event', Gtk.main_quit)
+window.show_all()
+Gtk.main()
